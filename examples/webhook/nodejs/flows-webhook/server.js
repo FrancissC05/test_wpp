@@ -30,45 +30,22 @@ app.post("/webhook", async (req, res) => {
     ) {
       // send flow message as per the docs here https://developers.facebook.com/docs/whatsapp/flows/gettingstarted/sendingaflow#interactive-message-parameters
       await axios({
-        method: "POST",
-        url: `https://graph.facebook.com/v22.0/${business_phone_number_id}/messages`,
-        headers: {
-          Authorization: `Bearer ${GRAPH_API_TOKEN}`,
-        },
-        data: {
-          messaging_product: "whatsapp",
-          to: message.from,
-          type: "interactive",
-          interactive: {
-            type: "flow",
-            header: {
-              type: "text",
-              text: "Send Money",
+            method: "POST",
+            url: `https://graph.facebook.com/v18.0/${business_phone_number_id}/messages`,
+            headers: {
+              Authorization: `Bearer ${GRAPH_API_TOKEN}`,
             },
-            body: {
-              text: "Send money quickly and securely to your friends and family. Complete the transfer in just a few steps!",
-            },
-            footer: {
-              text: "Click the button below to proceed",
-            },
-            action: {
-              name: "flow",
-              parameters: {
-                flow_id: FLOW_ID,
-                flow_message_version: "3",
-                // replace flow_token with a unique identifier for this flow message to track it in your endpoint & webhook
-                flow_token: "<FLOW_TOKEN_PLACEHOLDER>",
-                flow_cta: "Send Money",
-                flow_action: "data_exchange",
-                // uncomment to send a draft flow before publishing
-                // mode: "draft",
+            data: {
+              messaging_product: "whatsapp",
+              to: message.from,
+              text: { body: "Echo: " + message.text.body },
+              context: {
+                message_id: message.id, // shows the message as a reply to the original user message
               },
             },
-          },
-        },
-      });
+          });
     }
-
+/*
     // handle flow response message
     if (
       message.type === "interactive" &&
@@ -90,7 +67,7 @@ app.post("/webhook", async (req, res) => {
         },
       });
     }
-
+*/
     // mark incoming message as read
     await axios({
       method: "POST",
